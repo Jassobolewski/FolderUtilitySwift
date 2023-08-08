@@ -31,8 +31,32 @@ func isValidFolderName(_ folderName: String,_ show: Bool) -> Bool {
 }
 
 
+func isDirectoryValid(atPath path: String) -> Bool {
+    var isDirectory: ObjCBool = false
+    
+    // Check if the path exists and is a directory
+    if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) {
+        return isDirectory.boolValue
+    }
+    
+    return false
+}
+
+
+
+
+let arguments = CommandLine.arguments
+
+var directoryPath:FileManager.SearchPathDirectory = FileManager.SearchPathDirectory.desktopDirectory
+
+if arguments.count > 1 {
+    let name = arguments[1]
+    print("Hello, \(name)!")
+} else {
+}
+
 let fileManager = FileManager.default
-let desktopURL = fileManager.urls(for: .desktopDirectory, in: .userDomainMask).first!
+let desktopURL = fileManager.urls(for: directoryPath, in: .userDomainMask).first!
 
 
 var folderNames: [String] = []
