@@ -49,21 +49,25 @@ let arguments = CommandLine.arguments
 
 var directoryPath:FileManager.SearchPathDirectory = FileManager.SearchPathDirectory.desktopDirectory
 
-if arguments.count > 1 {
-    let name = arguments[1]
-    print("Hello, \(name)!")
-} else {
-}
-
+var fileDirectoryURL:URL
 let fileManager = FileManager.default
-let desktopURL = fileManager.urls(for: directoryPath, in: .userDomainMask).first!
+
+if arguments.count > 1 {
+    if isDirectoryValid(atPath: arguments[1]) {
+        fileDirectoryURL = URL(fileURLWithPath: arguments[1])
+    } else {
+        print("The directory provided is not valid or doesn't exist.")
+        exit(EXIT_FAILURE)
+    }
+}
+else//by default with no commandline args uses the desktop
+{
+    fileDirectoryURL = fileManager.urls(for: directoryPath, in: .userDomainMask).first!
+}
 
 
 var folderNames: [String] = []
-
-
 var inputVaild = false;
-
 
 print("Enter the name of the folder you want named on the desktop:")
 
@@ -82,28 +86,23 @@ while !inputVaild
 }
 
 print("Now enter the name of your sub folders (press 'Enter' to finish):")
-while inputVaild
-{
-   
-    if let name = readLine()
-    {
-        if isValidFolderName(name,false)
-        {
+
+while inputVaild {
+    if let name = readLine(){
+        if isValidFolderName(name,false){
             folderNames.append(name)
         }
-        else if(name.isEmpty)
-        {
+        else if(name.isEmpty){
             inputVaild = false;
         }
     }
-    
 }
 
 
 
 
 
-let folderURL = desktopURL.appendingPathComponent(folderNames[0])
+let folderURL = fileDirectoryURL.appendingPathComponent(folderNames[0])
 
 do {
     try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: false, attributes: nil)
